@@ -1,9 +1,11 @@
+var repeat = require("repeat");
+var connectionValues = require("./data.json");
 var googlePlayScraper = require("google-play-scraper");
-var MY_SLACK_WEBHOOK_URL = '';
+var MY_SLACK_WEBHOOK_URL = connectionValues.webhookUrl;
 var slack = require("slack-notify")(MY_SLACK_WEBHOOK_URL);
 
-var testChannel = '';
-var reviewChannel = '';
+var testChannel = connectionValues.testChannel;
+var reviewChannel = connectionValues.liveChannel;
 
 var appIdArray = [
     {id: 'bbc.mobile.news.uk', name: 'BBC UK'},
@@ -12,20 +14,24 @@ var appIdArray = [
     {id: 'uk.co.bbc.russian', name: 'BBC Russian'},
 ];
 
-
 var reviewSlack = slack.extend({
 channel: testChannel,
 icon_emoji: ':cake:',
 username: 'android review bot'
 });
 
+var interval = 24;
+var timeUnit = 'hours';
+repeat(iterateAppReviews).every(interval, timeUnit).start.now();
 
-appIdArray.forEach(function(appId) {
-    var results = googlePlayScraper.reviews({
-    appId: appId.id,
-    page:0,
-    sort: googlePlayScraper.sort.NEWEST
-    }).then(function(data) {return data;});
+
+function iterateAppReviews() {
+    appIdArray.forEach(function(appId) {
+        var results = googlePlayScraper.reviews({
+            appId: appId.id,
+            page:0,
+            sort: googlePlayScraper.sort.NEWEST
+        }).then(function(data) {return data;});
 
         results.then(
         function(data) {
@@ -47,13 +53,15 @@ appIdArray.forEach(function(appId) {
                             ]
                         }
                     ]
-            });
-        }
-    },
-    function(data) {
-        console.log("rejection error");
+                });
+            }
+        },
+        function(data) {
+            console.log("rejection error");
+        });
     });
-});
+}
+
 
 function getReviews(data) {
     var currentDate = new Date().getDate();
