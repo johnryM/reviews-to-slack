@@ -1,29 +1,31 @@
-var repeat = require("repeat");
+// data for config
 var connectionValues = require("./data.json");
+
+// deps
+var repeat = require("repeat");
 var googlePlayScraper = require("google-play-scraper");
-var MY_SLACK_WEBHOOK_URL = connectionValues.webhookUrl;
-var slack = require("slack-notify")(MY_SLACK_WEBHOOK_URL);
+var slack = require("slack-notify")(connectionValues.webhookUrl);
 
 var testChannel = connectionValues.testChannel;
 var reviewChannel = connectionValues.liveChannel;
 
 var appIdArray = [
-    {id: 'bbc.mobile.news.uk', name: 'BBC UK'},
-    {id: 'uk.co.bbc.mundo', name: 'BBC Mundo'},
-    {id: 'uk.co.bbc.hindi', name: 'BBC Hindi'},
-    {id: 'uk.co.bbc.russian', name: 'BBC Russian'},
+    {id: 'bbc.mobile.news.uk', name: 'BBC UK', flag: ':flag-gb:'},
+    {id: 'bbc.mobile.news.ww', name: 'BBC WW', flag: ':flag-us:'},
+    {id: 'uk.co.bbc.mundo', name: 'BBC Mundo', flag: ':flag-es:'},
+    {id: 'uk.co.bbc.hindi', name: 'BBC Hindi', flag: ':flag-in:'},
+    {id: 'uk.co.bbc.russian', name: 'BBC Russian', flag: ':flag-ru:'}
 ];
 
 var reviewSlack = slack.extend({
 channel: testChannel,
-icon_emoji: ':cake:',
-username: 'android review bot'
+icon_emoji: ':robot_face:',
+username: 'Review Bot'
 });
 
-var interval = 24;
+var interval = 1;
 var timeUnit = 'hours';
 repeat(iterateAppReviews).every(interval, timeUnit).start.now();
-
 
 function iterateAppReviews() {
     appIdArray.forEach(function(appId) {
@@ -37,15 +39,20 @@ function iterateAppReviews() {
         function(data) {
             var array = getReviews(data);
 
+            if (array.length == 0) {
+                console.log("No Reviews found on " + new Date().getDate());
+                return;
+            }
+
             for(var i=0;i < array.length; i++) {
                 reviewSlack({
-                    text: 'Android reviews from yesterday',
+                    text: 'Latest Android reviews',
                     attachments: [
                         {
                             color: getReviewColor(array[i].score),
                             fields: [
                                 {
-                                    title: appId.name,
+                                    title: appId.name + " " + appId.flag,
                                     value: getEmojiStar(array[i].score) + "\n" +
                                         array[i].title + "\n" +
                                         array[i].text
@@ -64,15 +71,15 @@ function iterateAppReviews() {
 
 
 function getReviews(data) {
-    var currentDate = new Date().getDate();
-    var yesterdayDate = new Date().getDate() - 1;
-
+    var now = new Date().getDate();
+    var hourInMilis = 60 * 60 * 1000;
+    var anHourAgo = now - hourInMilis;
 
     var resultArray = [];
 
     for(var i = 0; i < data.length; i++) {
         var dataDate = new Date(data[i].date).getDate();
-        if (dataDate == yesterdayDate) {
+        if (dataDate <= now && dataDate >= anHourAgo) {
             review = data[i];
             resultArray.push({
                 score: review.score,
