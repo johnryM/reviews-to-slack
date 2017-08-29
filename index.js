@@ -11,6 +11,7 @@ var reviewChannel = connectionValues.liveChannel;
 
 var appIdArray = [
     {id: 'bbc.mobile.news.uk', name: 'BBC UK', flag: ':flag-gb:'},
+    {id: 'bbc.mobile.news.cymru', name: 'BBC Cymru Fyw', flag: ':flag-gb:'},
     {id: 'bbc.mobile.news.ww', name: 'BBC WW', flag: ':flag-us:'},
     {id: 'uk.co.bbc.mundo', name: 'BBC Mundo', flag: ':flag-es:'},
     {id: 'uk.co.bbc.hindi', name: 'BBC Hindi', flag: ':flag-in:'},
