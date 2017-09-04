@@ -5,6 +5,9 @@ var connectionValues = require("./data.json");
 var repeat = require("repeat");
 var googlePlayScraper = require("google-play-scraper");
 var slack = require("slack-notify")(connectionValues.webhookUrl);
+var moment = require("moment");
+
+var formatString = "MMM Do YY";
 
 var testChannel = connectionValues.testChannel;
 var reviewChannel = connectionValues.liveChannel;
@@ -24,7 +27,7 @@ icon_emoji: ':robot_face:',
 username: 'Review Bot'
 });
 
-var interval = 1;
+var interval = 24;
 var timeUnit = 'hours';
 repeat(iterateAppReviews).every(interval, timeUnit).start.now();
 
@@ -41,27 +44,26 @@ function iterateAppReviews() {
             var array = getReviews(data);
 
             if (array.length == 0) {
-                console.log("No Reviews found on " + new Date().getDate());
-                return;
-            }
-
-            for(var i=0;i < array.length; i++) {
-                reviewSlack({
-                    text: 'Latest Android reviews',
-                    attachments: [
-                        {
-                            color: getReviewColor(array[i].score),
-                            fields: [
-                                {
-                                    title: appId.name + " " + appId.flag,
-                                    value: getEmojiStar(array[i].score) + "\n" +
-                                        array[i].title + "\n" +
-                                        array[i].text
-                                }
-                            ]
-                        }
-                    ]
-                });
+                console.log("No Reviews found on " + getYesterdayDate() + " for " + appId.id);
+            } else  {
+                for(var i=0;i < array.length; i++) {
+                    reviewSlack({
+                        text: 'Review from yesterday ' + getYesterdayDate(),
+                        attachments: [
+                            {
+                                color: getReviewColor(array[i].score),
+                                fields: [
+                                    {
+                                        title: appId.name + " " + appId.flag,
+                                        value: getEmojiStar(array[i].score) + "\n" +
+                                            array[i].title + "\n" +
+                                            array[i].text
+                                    }
+                                ]
+                            }
+                        ]
+                    });
+                }
             }
         },
         function(data) {
@@ -72,15 +74,13 @@ function iterateAppReviews() {
 
 
 function getReviews(data) {
-    var now = new Date().getDate();
-    var hourInMilis = 60 * 60 * 1000;
-    var anHourAgo = now - hourInMilis;
+    var yesterday = getYesterdayDate();
 
     var resultArray = [];
 
     for(var i = 0; i < data.length; i++) {
-        var dataDate = new Date(data[i].date).getDate();
-        if (dataDate <= now && dataDate >= anHourAgo) {
+                var dataDate = moment(new Date(data[i].date)).format(formatString);
+        if (dataDate == yesterday) {
             review = data[i];
             resultArray.push({
                 score: review.score,
@@ -110,4 +110,8 @@ function getEmojiStar(score) {
         starString = starString + ' :star:';
     }
     return starString;
+}
+
+function getYesterdayDate() {
+    return moment().subtract(1, 'days').format(formatString);
 }
