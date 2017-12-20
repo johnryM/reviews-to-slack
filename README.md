@@ -1,12 +1,13 @@
 # Reviews to Slack
 
+Deployed using Heroku and uses config vars to obfuscate the slack webhook and channels used.
+
 ## How to
-1. Create a `data.json` file in the folder root and create object containing the following fields:
+
+Set up the following config vars in Heroku via CLI or dashboard
+
 ~~~~
-{
-    "webhookUrl" : "https://hooks.slack.com/services/....",
-    "testChannel" : "#bleh",
-    "liveChannel" : "#blah"
-}
+    key = WEBHOOK | VALUE = https://hooks.slack.com/services/....
+    key = TESTCHANNEL | VALUE =  #bleh
+    key = LIVECHANNEL | VALUE = #blah
 ~~~~
-2. Add your Slack webhook and the corresponding channel names.
