@@ -2,7 +2,7 @@
 var moment = require("moment");
 var googlePlayScraper = require("google-play-scraper");
 
-var MY_SLACK_WEBHOOK_URL = process.env.WEBHOOK;
+var MY_SLACK_WEBHOOK_URL = process.env.LIVEWEBHOOK;
 var slack = require("slack-notify")(MY_SLACK_WEBHOOK_URL);
 
 var testChannel = process.env.TESTCHANNEL;
@@ -21,7 +21,7 @@ var appIdArray = [
 ];
 
 var reviewSlack = slack.extend({
-    channel: testChannel,
+    channel: reviewChannel,
     icon_emoji: ':robot:',
     username: 'Android Reviews Bot',
     icon_emoji: ':robot:'
@@ -123,7 +123,7 @@ function getYesterdaysDate() {
 
 function sendIntroTitle() {
     slack.send({
-        channel: testChannel,
+        channel: reviewChannel,
         icon_emoji: ':robot:',
         username: 'Android Reviews Bot',
         text: 'Reviews for ' + getYesterdaysDate()
