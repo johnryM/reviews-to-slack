@@ -3,6 +3,7 @@ var moment = require("moment");
 var googlePlayScraper = require("google-play-scraper");
 
 var MY_SLACK_WEBHOOK_URL = process.env.LIVEWEBHOOK;
+var TEST_SLACK_WEBHOOK_URL = process.env.TESTWEBHOOK;
 var slack = require("slack-notify")(MY_SLACK_WEBHOOK_URL);
 
 var testChannel = process.env.TESTCHANNEL;
