@@ -45,8 +45,6 @@ function iterateAppReviews() {
             var array = getReviews(data);
 
             for(var i=0;i < array.length; i++) {
-                //console.log("title " + array[i].title);
-                console.log(JSON.stringify(array[i]));
                 reviewSlack({
                     attachments: [
                         {
@@ -63,8 +61,7 @@ function iterateAppReviews() {
                         }
                     ]
                 });
-            }
-        },
+},
         function(data) {
             console.log("rejection error");
         });
@@ -128,5 +125,4 @@ function sendIntroTitle() {
         icon_emoji: ':robot:',
         username: 'Android Reviews Bot',
         text: 'Reviews for ' + getYesterdaysDate()
-    });
-}
+    }
