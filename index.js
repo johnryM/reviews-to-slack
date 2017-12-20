@@ -2,8 +2,6 @@
 var moment = require("moment");
 var googlePlayScraper = require("google-play-scraper");
 
-var connectionValues = require("./data.json");
-// var MY_SLACK_WEBHOOK_URL = connectionValues.webhookUrl;
 var MY_SLACK_WEBHOOK_URL = process.env.WEBHOOK;
 var slack = require("slack-notify")(MY_SLACK_WEBHOOK_URL);
 
