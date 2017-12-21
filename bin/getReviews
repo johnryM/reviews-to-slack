@@ -37,38 +37,35 @@ iterateAppReviews();
 function iterateAppReviews() {
     appIdArray.forEach(function(appId) {
         var results = googlePlayScraper.reviews({
-            appId: appId.id,
-            page:0,
-            sort: googlePlayScraper.sort.NEWEST
-        }).then(function(data) {return data;});
+                            appId: appId.id,
+                            page:0,
+                            sort: googlePlayScraper.sort.NEWEST
+                      })
+                      .then(function(data) {return data;});
 
         results.then(
             function(data) {
                 var array = getReviews(data);
-
                 for(var i=0;i < array.length; i++) {
                     reviewSlack({
-                        attachments: [
-                            {
+                        attachments: [{
                                 color: getReviewColor(array[i].score),
-                                fields: [
-                                    {
-                                        title: appId.name + " " + appId.flag,
-                                        value: getEmojiStar(array[i].score) + "\n" +
-                                            array[i].title + "\n" +
-                                            array[i].text + "\n" +
-                                            "~by " + array[i].userName + "~"
-                                    }
-                                ]
-                            }
-                        ]
+                                fields: [{
+                                    title: appId.name + " " + appId.flag,
+                                    value: getEmojiStar(array[i].score) + "\n" +
+                                        array[i].title + "\n" +
+                                        array[i].text + "\n" +
+                                        "~by " + array[i].userName + "~"
+                                }]
+                        }]
                     });
                 }
+            },
             function(data) {
                 console.log("rejection error");
         });
     });
-}
+}// end iterateAppReviews
 
 function getReviews(data) {
     var currentDate = new Date().getDate();
