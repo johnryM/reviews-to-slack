@@ -12,3 +12,5 @@ Set up the following config vars in Heroku via CLI or dashboard
     key = TESTCHANNEL | VALUE =  #bleh
     key = LIVECHANNEL | VALUE = #blah
 ~~~~
+
+Once your Heroku instance is up and running, add a scheduler to it, add a job named `getReviews` and set it to run daily.
