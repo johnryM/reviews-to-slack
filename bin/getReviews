@@ -43,29 +43,29 @@ function iterateAppReviews() {
         }).then(function(data) {return data;});
 
         results.then(
-        function(data) {
-            var array = getReviews(data);
+            function(data) {
+                var array = getReviews(data);
 
-            for(var i=0;i < array.length; i++) {
-                reviewSlack({
-                    attachments: [
-                        {
-                            color: getReviewColor(array[i].score),
-                            fields: [
-                                {
-                                    title: appId.name + " " + appId.flag,
-                                    value: getEmojiStar(array[i].score) + "\n" +
-                                        array[i].title + "\n" +
-                                        array[i].text + "\n" +
-                                        "~by " + array[i].userName + "~"
-                                }
-                            ]
-                        }
-                    ]
-                });
-},
-        function(data) {
-            console.log("rejection error");
+                for(var i=0;i < array.length; i++) {
+                    reviewSlack({
+                        attachments: [
+                            {
+                                color: getReviewColor(array[i].score),
+                                fields: [
+                                    {
+                                        title: appId.name + " " + appId.flag,
+                                        value: getEmojiStar(array[i].score) + "\n" +
+                                            array[i].title + "\n" +
+                                            array[i].text + "\n" +
+                                            "~by " + array[i].userName + "~"
+                                    }
+                                ]
+                            }
+                        ]
+                    });
+                }
+            function(data) {
+                console.log("rejection error");
         });
     });
 }
